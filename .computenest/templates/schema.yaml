@@ -1,0 +1,130 @@
+Parameters:
+  instance_charge_type:
+    Type: String
+    AssociationProperty: ChargeType
+    AssociationPropertyMetadata:
+      LocaleKey: InstanceChargeType
+    Default: PostPaid
+    Label:
+      zh-cn: 付费类型
+      en: ECS Instance Billing Method
+    AllowedValues:
+      - PostPaid
+      - PrePaid
+  period_unit:
+    Type: String
+    AssociationProperty: PayPeriodUnit
+    AssociationPropertyMetadata:
+      Visible:
+        Condition:
+          Fn::Not:
+            Fn::Equals:
+              - ${instance_charge_type}
+              - PostPaid
+    Default: Month
+    AllowedValues:
+      - Month
+    Label:
+      zh-cn: 购买资源时长周期
+      en: Purchase Cycle
+  period:
+    Type: Number
+    AssociationProperty: PayPeriod
+    AssociationPropertyMetadata:
+      Visible:
+        Condition:
+          Fn::Not:
+            Fn::Equals:
+              - ${instance_charge_type}
+              - PostPaid
+    Default: 1
+    Label:
+      zh-cn: 购买资源时长
+      en: Purchase Duration
+    AllowedValues:
+      - 1
+      - 2
+      - 3
+      - 4
+      - 5
+      - 6
+      - 7
+      - 8
+      - 9
+      - 12
+      - 24
+      - 36
+      - 48
+  instance_type:
+    Type: String
+    AssociationProperty: ALIYUN::ECS::Instance::InstanceType
+    AssociationPropertyMetadata:
+      InstanceChargeType: ${instance_charge_type}
+      Constraints:
+        InstanceTypeFamily:
+          - ecs.u1
+          - ecs.e
+    Label:
+      zh-cn: 实例规格
+      en: The instance tye of ECS instance
+  password:
+    Type: String
+    Label:
+      en: Instance Password
+      zh-cn: 实例密码
+    Description:
+      en: Server login password, Length 8-30, must contain three(Capital letters, lowercase letters, numbers, ()`~!@#$%^&*_-+=|{}[]:;'<>,.?/ Special symbol in).
+      zh-cn: 服务器登录密码,长度8-30，必须包含三项（大写字母、小写字母、数字、 ()`~!@#$%^&*_-+=|{}[]:;'<>,.?/ 中的特殊符号）。
+    NoEcho: true
+    AssociationProperty: ALIYUN::ECS::Instance::Password
+    ConstraintDescription:
+      en: '8-32 characters, can contain size letters, Numbers and special symbols, including:! @ # $ % ^ & * ( ) _ + - ='
+      zh-cn: 8-32个字符,可包含大小字母、数字及特殊符号（包含：!@#$%^&*()_+-=）
+    MinLength: 8
+    MaxLength: 32
+  zone_id:
+    Type: String
+    AssociationProperty: ALIYUN::ECS::Instance::ZoneId
+    Label:
+      zh-cn: 可用区
+      en: The ZoneId used to launch service
+  vpc_id:
+    Type: String
+    AssociationProperty: ALIYUN::ECS::VPC::VPCId
+    Label:
+      zh-cn: 专有网络VPC实例ID
+      en: Existing VPC Instance ID
+  vswitch_id:
+    Type: String
+    AssociationProperty: ALIYUN::ECS::VSwitch::VSwitchId
+    AssociationPropertyMetadata:
+      VpcId: ${vpc_id}
+      ZoneId: ${zone_id}
+    Label:
+      zh-cn: 交换机实例ID
+      en: VSwitch ID
+Metadata:
+  ALIYUN::ROS::Interface:
+    ParameterGroups:
+      - Parameters:
+          - instance_charge_type
+          - period_unit
+          - period
+        Label:
+          default: 付费类型配置
+      - Parameters:
+          - instance_type
+          - password
+        Label:
+          default: 资源配置
+      - Parameters:
+          - zone_id
+          - vpc_id
+          - vswitch_id
+        Label:
+          default: 可用区配置
+Outputs:
+  server_address:
+    Description:
+      zh-cn: 访问地址
+      en: ServerAddress
