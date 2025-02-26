@@ -88,21 +88,27 @@ Parameters:
     Label:
       zh-cn: 可用区
       en: The ZoneId used to launch service
-  vpc_id:
+  vpc_cidr:
     Type: String
-    AssociationProperty: ALIYUN::ECS::VPC::VPCId
     Label:
-      zh-cn: 专有网络VPC实例ID
-      en: Existing VPC Instance ID
-  vswitch_id:
+      en: VPC CIDR IPv4 Block
+      zh-cn: 专有网络IPv4网段
+    Description:
+      zh-cn: VPC的ip地址段范围，<br>您可以使用以下的ip地址段或其子网:<br><font color='green'>[10.0.0.0/8]</font><br><font color='green'>[172.16.0.0/12]</font><br><font color='green'>[192.168.0.0/16]</font>
+      en: 'The ip address range of the VPC in the CidrBlock form; <br>You can use the following ip address ranges and their subnets: <br><font color=''green''>[10.0.0.0/8]</font><br><font color=''green''>[172.16.0.0/12]</font><br><font color=''green''>[192.168.0.0/16]</font>'
+    Default: 192.168.0.0/16
+    AssociationProperty: ALIYUN::VPC::VPC::CidrBlock
+  vswitch_cidrs:
     Type: String
-    AssociationProperty: ALIYUN::ECS::VSwitch::VSwitchId
-    AssociationPropertyMetadata:
-      VpcId: ${vpc_id}
-      ZoneId: ${zone_id}
     Label:
-      zh-cn: 交换机实例ID
-      en: VSwitch ID
+      en: VSwitch CIDR Block
+      zh-cn: 交换机子网网段
+    Description:
+      zh-cn: 必须属于VPC的子网段。
+      en: Must belong to the subnet segment of VPC.
+    Default: 192.168.0.0/24
+    Required: true
+    AssociationProperty: ALIYUN::VPC::VSwitch::CidrBlock
 Metadata:
   ALIYUN::ROS::Interface:
     ParameterGroups:
@@ -119,8 +125,8 @@ Metadata:
           default: 资源配置
       - Parameters:
           - zone_id
-          - vpc_id
-          - vswitch_id
+          - vpc_cidr
+          - vswitch_cidrs
         Label:
           default: 可用区配置
 Outputs:
