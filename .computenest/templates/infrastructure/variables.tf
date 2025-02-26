@@ -21,17 +21,19 @@ variable "zone_id" {
   description = "可用区"
 }
 
-variable "vpc_id" {
-  type    = string
-  default = null
-  description = "专有网络VPC实例ID"
+variable "vpc_cidr" {
+  description = "The cidr block used to launch a new vpc."
+  type        = string
+  default     = "192.168.0.0/16"
 }
 
-variable "vswitch_id" {
-  type    = string
-  default = null
-  description = "交换机实例ID"
+
+variable "vswitch_cidrs" {
+  description = "List cidr blocks used to create several new vswitches when 'new_vpc' is true."
+  type        = string
+  default     = "192.168.1.0/24"
 }
+
 
 variable "instance_type"{
   type        = string

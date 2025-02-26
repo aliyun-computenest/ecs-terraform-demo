@@ -1,4 +1,18 @@
-# Create a new ECS instance for VPC
+resource "alicloud_vpc" "new_vpc" {
+  cidr_block = var.vpc_cidr
+}
+
+resource "alicloud_vswitch" "new_vsw" {
+  vpc_id       = alicloud_vpc.new_vpc.id
+  cidr_block   = var.vswitch_cidrs
+  zone_id      = var.zone_id
+}
+
+resource "alicloud_security_group" "group" {
+  description = "security group"
+  vpc_id      = alicloud_vpc.new_vpc.id
+}
+
 resource "alicloud_instance" "instance" {
   availability_zone = var.zone_id
   security_groups   = alicloud_security_group.group.*.id
@@ -10,7 +24,7 @@ resource "alicloud_instance" "instance" {
   system_disk_size           = 200
   system_disk_category       = "cloud_essd"
   password                   = var.password
-  vswitch_id                 = var.vswitch_id
+  vswitch_id                 = alicloud_vswitch.new_vsw.id
   internet_max_bandwidth_out = 5
 }
 
@@ -32,11 +46,6 @@ resource "alicloud_ecs_invocation" "default" {
     timeouts {
       create = "3600s"
     }
-}
-
-resource "alicloud_security_group" "group" {
-  description = "security group"
-  vpc_id      = var.vpc_id
 }
 
 resource "alicloud_security_group_rule" "allow_80_tcp" {
